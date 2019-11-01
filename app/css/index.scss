@@ -1,0 +1,79 @@
+$fontFamily: Georgia, serif;
+$nbFruits: 18;
+$list: ('pomme' 'banane' 'orange' 'citronVert' 'grenade' 'abricot' 'citronJaune' 'fraise' 'pomme' 'peche' 'raisin' 'pasteque' 'prune' 'poire' 'cerise' 'framboise' 'mangue' 'bigarot');
+
+* {
+	font-family: $fontFamily;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+h1 {
+	font-size: 2em;
+	text-align: center;
+}
+
+.board {
+	width: 1000px;
+	height: 600px;
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-around;
+	background: #000;
+}
+
+.card {
+	width: 100px;
+	height: 100px;
+	margin: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	img {
+		width: 100%;
+		height: auto;
+		/*opacity: 0.5;*/
+	}
+}
+
+
+@for $i from 1 through $nbFruits {
+	.#{nth($list, $i)} {
+		background: url('./images/cards.png') 0px ($i - 1)*-100px;
+		background-size: cover;
+	}
+}
+
+@keyframes spin {
+	from {
+		transform: rotateY(0deg);
+	}
+	to {
+		transform: rotateY(-180deg);
+	}
+}
+
+@-webkit-keyframes back {
+	from {
+		transform: rotateY(-180deg);
+	}
+	to {
+		transform: rotateY(-360deg);
+	}
+}
+
+.discover {
+	animation: spin 0.5s linear forwards;
+}
+  
+.recover {
+	animation: back 0.5s linear forwards;
+}

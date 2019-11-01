@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="index.css">
+	<title>Memory</title>
+</head>
+<body>
+	<h1>Jeu du memory</h1>
+	<div class="board"></div>
+	<div class="counter"></div>
+	<script src="librairies.js"></script>
+	<script src="index.js"></script>
+	<script>
+		const manager = new (require("js/Manager"))();
+		manager.setCards();
+	</script>
+</body>
+</html>

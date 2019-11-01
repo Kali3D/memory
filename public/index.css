@@ -1,0 +1,127 @@
+* {
+  font-family: Georgia, serif; }
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; }
+
+h1 {
+  font-size: 2em;
+  text-align: center; }
+
+.board {
+  width: 1000px;
+  height: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  background: #000; }
+
+.card {
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .card img {
+    width: 100%;
+    height: auto;
+    /*opacity: 0.5;*/ }
+
+.pomme {
+  background: url("./images/cards.png") 0px 0px;
+  background-size: cover; }
+
+.banane {
+  background: url("./images/cards.png") 0px -100px;
+  background-size: cover; }
+
+.orange {
+  background: url("./images/cards.png") 0px -200px;
+  background-size: cover; }
+
+.citronVert {
+  background: url("./images/cards.png") 0px -300px;
+  background-size: cover; }
+
+.grenade {
+  background: url("./images/cards.png") 0px -400px;
+  background-size: cover; }
+
+.abricot {
+  background: url("./images/cards.png") 0px -500px;
+  background-size: cover; }
+
+.citronJaune {
+  background: url("./images/cards.png") 0px -600px;
+  background-size: cover; }
+
+.fraise {
+  background: url("./images/cards.png") 0px -700px;
+  background-size: cover; }
+
+.pomme {
+  background: url("./images/cards.png") 0px -800px;
+  background-size: cover; }
+
+.peche {
+  background: url("./images/cards.png") 0px -900px;
+  background-size: cover; }
+
+.raisin {
+  background: url("./images/cards.png") 0px -1000px;
+  background-size: cover; }
+
+.pasteque {
+  background: url("./images/cards.png") 0px -1100px;
+  background-size: cover; }
+
+.prune {
+  background: url("./images/cards.png") 0px -1200px;
+  background-size: cover; }
+
+.poire {
+  background: url("./images/cards.png") 0px -1300px;
+  background-size: cover; }
+
+.cerise {
+  background: url("./images/cards.png") 0px -1400px;
+  background-size: cover; }
+
+.framboise {
+  background: url("./images/cards.png") 0px -1500px;
+  background-size: cover; }
+
+.mangue {
+  background: url("./images/cards.png") 0px -1600px;
+  background-size: cover; }
+
+.bigarot {
+  background: url("./images/cards.png") 0px -1700px;
+  background-size: cover; }
+
+@keyframes spin {
+  from {
+    transform: rotateY(0deg); }
+  to {
+    transform: rotateY(-180deg); } }
+
+@-webkit-keyframes back {
+  from {
+    transform: rotateY(-180deg); }
+  to {
+    transform: rotateY(-360deg); } }
+
+.discover {
+  animation: spin 0.5s linear forwards; }
+
+.recover {
+  animation: back 0.5s linear forwards; }
+
+
+/*# sourceMappingURL=index.css.map*/
