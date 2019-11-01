@@ -1,0 +1,11 @@
+{
+  "name": "memory",
+  "version": "1.0.0",
+  "description": "Jeu de memory - Recrutement o'clock",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kali3D",
+  "license": "ISC"
+}
