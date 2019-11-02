@@ -2,24 +2,49 @@ import $ from "jquery";
 
 import Card from "./Card";
 import Spinner from "./Spinner";
-import {randomizeArray} from "./utils";
+import Counter from "./Counter";
+import * as tools from "./utils";
 
 class Manager {
 
 	constructor() {
+		this.init();
+	}
+
+	init() {
 		this.spinner = new Spinner();
+		this.counter = new Counter();
 		this.fruitClicked = null;
 		this.nbClicks = 0;
 		this.nbPairs = 0;
+		this.gameStarted = false;
+		this.gameEnded = false;
+		this.gameLasted = 0;
+		this.tools = tools;
+	}
+
+	reset() {
+		this.tools.hideDecal(".card.showCard", 50);
+		setTimeout(() => {
+			$(".board").html("");
+			$(".again").css({display: "none"});
+			$(".beforeCount.v2").removeClass("current");
+			$(".beforeCount.v1").addClass("current").css({display: "flex"});
+			$(".beforeCount.v1 select").val("1");
+			$(".beforeCount.v2 input").val("");
+			$(".backdrop").removeClass("show");
+			this.init();
+			this.setCards();
+		}, 2000)
 	}
 
 	setCards() {
-		//creation de la liste fruits réduite à 14
+		//creation de la liste de fruits réduite à 14
 		const fruits = ['pomme', 'banane', 'orange', 'citronVert', 'grenade', 'abricot', 'citronJaune', 'fraise', 'pomme', 'peche', 'raisin', 'pasteque', 'prune', 'poire', 'cerise', 'framboise', 'mangue', 'bigarot'];
-		randomizeArray(fruits).slice(14);
+		this.tools.randomizeArray(fruits).slice(14);
 		
 		//positions aléatoires
-		const ranks = randomizeArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]);
+		const ranks = this.tools.randomizeArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]);
 
 		//creation du tableau de cartes aléatoire
 		const elements = [];
@@ -33,12 +58,56 @@ class Manager {
 
 		//ajout du html dans la div plateau
 		$(".board").append(elements);
+		setTimeout(() => {
+			this.tools.showDecal(".card", 50);
+		}, 300);
+	};
+
+	showBackdrop(duration, func) {
+		$(".backdrop").addClass("show");
+		if (typeof func === "function")
+			func.apply(this);
+		setTimeout(() => {
+			$(".backdrop").removeClass("show");
+		}, duration);
+	}
+
+	showScores() {
+		this.showBackdrop(3000);
+	}
+	
+
+	checkKey(event) {
+		if (event.key === "Enter")
+			this.startGame();
+	};
+
+	startGame() {
+		this.gameStarted = true;
+		$(".backdrop").removeClass("show");
+		$(".error").html("");
+		const val = parseInt($(".current #duration").val(), 10);
+		if (!val)  {
+			$(".error").html("Oups ... J'ai pas compris !");
+			$(".current #duration").val("");
+		} else if (val > 59) {
+			$(".error").html("Faut pas exag&eacute;rer ... 59 minutes max !");
+			$(".current #duration").val("");
+		} else {
+			setTimeout(() => {
+				const duration = val * 60;
+				$(".beforeCount").css({display: "none"});
+				$(".counting").css({display: "flex"});
+				this.counter.start(duration);
+				this.update();
+			}, 300);
+		}
 	};
 
 	spin(target) {
 		//on ne retourne une carte que si moins de 2 cartes sont retournées
 		//et si cette carte n'est pas déjà retournée
-		if (this.nbClicks < 2 && !$(target).hasClass("discover")) {
+		if (this.gameStarted && this.nbClicks < 2 && !$(target).hasClass("discover")) {
 			if (!this.fruitClicked) {
 				//on retourne la première carte
 				this.spinner.spin(target);
@@ -55,21 +124,54 @@ class Manager {
 					this.nbPairs++;
 				} else {
 					setTimeout(() => {
-						this.nbClicks = 0;
+						if (!this.gameEnded)
+							this.nbClicks = 0;
 					}, 2000);
 				}
 				//si toutes les cartes sont retournées, on clôture le jeu
-				if (this.nbPairs === 14)
-					this.endGame();
-
+				if (this.nbPairs === 14) {
+					this.gameLasted = this.counter.lasted;
+					console.dir(this.counter);
+					console.log(this.gameLasted);
+					this.endGame(true);
+				}
 			}
 		}
 	};
 
-	endGame() {
-		this.nClicks = 3;
-		console.log("game ended");
-	}
+	endGame(won) {
+		this.nbClicks = 3;
+		this.gameEnded = true;
+		setTimeout(() => {
+			$(".counting").css({display: "none"});
+			$(".again").css({display: "flex"});
+			$(".discover").addClass("showDiscovered");
+			$(".card").removeClass("recover").removeClass("discover");
+			if (won) {
+				this.showBackdrop(5000, () => {
+					$(".backdrop").html(`Bravo, c'est gagn&eacute; !!!<br />Vous avez trouv&eacute; en ${this.gameLasted} minute(s)`);
+				});
+			} else {
+				this.showBackdrop(5000, () => {
+					$(".backdrop").html("Arf ..., c'est perdu !");
+				});
+			}
+		}, 500);
+	};
+
+	update() {
+		if (!this.gameEnded && this.counter && this.counter.started) {
+			 if (this.counter.ended) {
+				this.endGame(false);
+				this.gameLasted = this.counter.lasted;
+				console.dir(this.counter);
+				console.log(this.gameLasted);
+				this.counter = null;
+			} else
+				this.counter.update();
+		}
+		requestAnimationFrame(() => this.update());
+	};
 }
 
 module.exports = Manager;

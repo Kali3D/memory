@@ -1,0 +1,67 @@
+$nbFruits: 18;
+$list: ('pomme' 'banane' 'orange' 'citronVert' 'grenade' 'abricot' 'citronJaune' 'fraise' 'pomme' 'peche' 'raisin' 'pasteque' 'prune' 'poire' 'cerise' 'framboise' 'mangue' 'bigarot');
+
+.card {
+	width: 100px;
+	height: 100px;
+	margin: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 1s ease-in-out;
+	img {
+		width: 100%;
+		height: auto;
+		transform: rotateY(-180deg);
+		//opacity: 0.5;
+	}
+}
+
+.hideCard {
+	transform: rotateY(-180deg) translateX(-100vw);
+}
+
+.showCard {
+	transform: rotateY(-180deg) translateX(0vw);
+}
+
+@for $i from 1 through $nbFruits {
+	.#{nth($list, $i)} {
+		background: url('./images/cards.png') 0px ($i - 1)*-100px;
+		background-size: cover;
+	}
+}
+
+@keyframes spin {
+	from {
+		transform: rotateY(-180deg) translateX(0vw);
+	}
+	to {
+		transform: rotateY(0deg) translateX(0vw);
+	}
+}
+
+@-webkit-keyframes back {
+	from {
+		transform: rotateY(0deg) translateX(0vw);
+	}
+	to {
+		transform: rotateY(180deg) translateX(0vw);
+	}
+}
+
+.discover {
+	animation: spin 0.5s linear forwards;
+}
+  
+.recover {
+	animation: back 0.5s linear forwards;
+}
+
+.showDiscovered {
+	transform: rotateY(0deg) translateX(0vw);
+}
+
+.hideDiscovered {
+	transform: rotateY(0deg) translateX(100vw);
+}

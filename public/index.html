@@ -8,12 +8,42 @@
 <body>
 	<h1>Jeu du memory</h1>
 	<div class="board"></div>
-	<div class="counter"></div>
+	<div class="counter">
+		<div class="beforeCount v1 current">
+			<span>Je le fais en :</span>
+			<select name="duration" id="duration" onChange="manager.tools.checkDuration();">
+				<option value="1">1 minute</option>
+				<option value="3">3 minutes</option>
+				<option value="5">5 minutes</option>
+				<option value="10">10 minutes</option>
+				<option value="20">20 minutes</option>
+				<option value="30">30 minutes</option>
+				<option value="choose">je choisis ...</option>
+			</select>
+			<div class="button" onMouseDown="manager.tools.press(event);" onMouseUp="manager.tools.release(event);manager.startGame();">Valider</div>
+		</div>
+		<div class="beforeCount v2">
+			<span>Nb minutes :</span>
+			<input name="duration" id="duration" type="number" onKeyUp="manager.checkKey(event);"/>
+			<div class="button" onMouseDown="manager.tools.press(event);" onMouseUp="manager.tools.release(event);manager.startGame();">Valider</div>
+		</div>
+		<div class="counting">
+			<div class="time"></div>
+			<progress id="elapsed" max="100" value=""></progress>
+		</div>
+		<div class="again">
+			<div class="button" onMouseDown="manager.tools.press(event);" onMouseUp="manager.tools.release(event);manager.reset();">Encore !</div>
+		</div>
+	</div>
+	<div class="error"></div>
+	<div class="backdrop">
+	</div>
 	<script src="librairies.js"></script>
 	<script src="index.js"></script>
 	<script>
 		const manager = new (require("js/Manager"))();
 		manager.setCards();
+		manager.showScores();
 	</script>
 </body>
 </html>

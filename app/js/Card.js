@@ -2,7 +2,7 @@ import $ from "jquery";
 
 class Card {
 	constructor(index, fruit) {
-		this.element = $(`<div class='card ${fruit}' id='card${index}'/></div>`);
+		this.element = $(`<div class='card hideCard ${fruit}' id='card${index}'/></div>`);
 		this.element.append("<img src='./images/cover.jpg' />");
 		this.setEvents();
 	}

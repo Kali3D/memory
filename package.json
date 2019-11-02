@@ -4,17 +4,20 @@
   "description": "Jeu de memory - Recrutement o'clock",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build && npm run server",
+    "launch": "npm run server",
+    "build": "brunch build",
+    "dev": "brunch watch --server",
+    "server": "node server.js"
   },
   "author": "Kali3D",
   "license": "ISC",
-  "scripts": {
-    "start": "brunch build && node server.js"
-  },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "jquery": "^3.4.1"
+    "jquery": "^3.4.1",
+    "moment": "^2.24.0",
+    "three": "^0.110.0"
   },
   "devDependencies": {
     "babel-brunch": "^7.0.1",
