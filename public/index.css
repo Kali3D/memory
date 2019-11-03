@@ -1,23 +1,4 @@
-.card {
-  width: 100px;
-  height: 100px;
-  margin: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 1s ease-in-out; }
-  .card img {
-    width: 100%;
-    height: auto;
-    transform: rotateY(-180deg); }
-
-.hideCard {
-  transform: rotateY(-180deg) translateX(-100vw); }
-
-.showCard {
-  transform: rotateY(-180deg) translateX(0vw); }
-
-.pomme {
+.pommeRouge {
   background: url("./images/cards.png") 0px 0px;
   background-size: cover; }
 
@@ -49,7 +30,7 @@
   background: url("./images/cards.png") 0px -700px;
   background-size: cover; }
 
-.pomme {
+.pommeVerte {
   background: url("./images/cards.png") 0px -800px;
   background-size: cover; }
 
@@ -89,23 +70,24 @@
   background: url("./images/cards.png") 0px -1700px;
   background-size: cover; }
 
-@keyframes spin {
-  from {
-    transform: rotateY(-180deg) translateX(0vw); }
-  to {
-    transform: rotateY(0deg) translateX(0vw); } }
+.card {
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 1s ease-in-out; }
+  .card img {
+    width: 100%;
+    height: auto;
+    transform: rotateY(-180deg); }
 
-@-webkit-keyframes back {
-  from {
-    transform: rotateY(0deg) translateX(0vw); }
-  to {
-    transform: rotateY(180deg) translateX(0vw); } }
+.hideCard {
+  transform: rotateY(-180deg) translateX(-100vw); }
 
-.discover {
-  animation: spin 0.5s linear forwards; }
-
-.recover {
-  animation: back 0.5s linear forwards; }
+.showCard {
+  transform: rotateY(-180deg) translateX(0vw); }
 
 .showDiscovered {
   transform: rotateY(0deg) translateX(0vw); }
@@ -113,12 +95,34 @@
 .hideDiscovered {
   transform: rotateY(0deg) translateX(100vw); }
 
+@keyframes spin {
+  from {
+    transform: rotateY(-180deg) translateX(0vw); }
+  to {
+    transform: rotateY(0deg) translateX(0vw); } }
+
+.discover {
+  animation: spin 0.5s linear forwards; }
+
+@-webkit-keyframes back {
+  from {
+    transform: rotateY(0deg) translateX(0vw); }
+  to {
+    transform: rotateY(180deg) translateX(0vw); } }
+
+.recover {
+  animation: back 0.5s linear forwards; }
+
+.counting, .again {
+  display: none;
+  align-items: center; }
+
 .counter {
+  margin: 20px auto;
   width: 50%;
   background-color: #d1f1e2;
   border: 3px solid white;
   border-radius: 20px;
-  margin: 20px auto;
   box-shadow: 5px 5px 10px #1c4237;
   font-size: 20px; }
 
@@ -139,20 +143,16 @@
   display: none; }
 
 .counting {
-  display: none;
   flex-direction: column;
-  align-items: center;
   justify-content: space-between;
-  margin: 20px auto; }
-
-.again {
-  display: none;
-  align-items: center;
-  justify-content: center;
   margin: 20px auto; }
 
 .time {
   margin: 10px auto; }
+
+.again {
+  justify-content: center;
+  margin: 20px auto; }
 
 * {
   font-family: Georgia, serif; }
@@ -165,62 +165,6 @@ body {
   align-items: center;
   justify-content: flex-start;
   background: linear-gradient(#fffddc, #65deba); }
-
-#gl {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: -1; }
-
-h1 {
-  font-size: 3em;
-  text-align: center;
-  color: #65deba; }
-
-.shadowed {
-  text-shadow: 1px 1px 3px #777, -1px -1px 3px #777, 1px -1px 3px #777, -1px 1px 3px #777; }
-
-.error {
-  color: red;
-  text-align: center;
-  font-size: 20px; }
-
-.backdrop {
-  position: absolute;
-  top: 200px;
-  left: 20%;
-  width: 60%;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  font-size: 30px;
-  color: white;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  border: 3px solid black;
-  border-radius: 20px;
-  transform: translateY(-100vh);
-  transition: transform 1s ease-in-out; }
-
-.show {
-  transform: translateY(0vh); }
-
-.board {
-  border: 2px solid #65deba;
-  border-radius: 20px;
-  box-shadow: 5px 5px 10px #1c4237;
-  width: 1000px;
-  height: 600px;
-  margin: 10px auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-around;
-  background: linear-gradient(45deg, #3c45f7, #fffddc); }
 
 .button {
   border: 2px solid #65deba;
@@ -237,17 +181,17 @@ h1 {
   background-color: rgba(255, 255, 255, 0.7);
   color: black; }
 
-.pressed {
-  animation: pressed 50ms linear forwards; }
-
-.released {
-  animation: released 0.2s linear forwards; }
-
 @keyframes pressed {
   0% {
     transform: perspective(1000px) translateZ(0px); }
   100% {
     transform: perspective(1000px) translateZ(-100px); } }
+
+.pressed {
+  animation: pressed 50ms linear forwards; }
+
+.released {
+  animation: released 0.2s linear forwards; }
 
 @keyframes released {
   0% {
@@ -260,6 +204,62 @@ h1 {
     transform: perspective(1000px) translateZ(50px); }
   100% {
     transform: perspective(1000px) translateZ(0px); } }
+
+#gl {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: -2; }
+
+h1 {
+  font-size: 3em;
+  text-align: center;
+  color: #65deba;
+  text-shadow: 1px 1px 3px #777, -1px -1px 3px #777, 1px -1px 3px #777, -1px 1px 3px #777; }
+
+.board {
+  border: 2px solid #65deba;
+  border-radius: 20px;
+  box-shadow: 5px 5px 10px #1c4237;
+  width: 1000px;
+  height: 600px;
+  margin: 10px auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  background: linear-gradient(45deg, #3c45f7, #fffddc);
+  z-index: -1; }
+
+.error {
+  color: red;
+  text-align: center;
+  font-size: 20px; }
+
+.backdrop {
+  position: absolute;
+  top: 200px;
+  width: 60%;
+  max-width: 900px;
+  margin: auto;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  font-size: 30px;
+  color: white;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 3px solid black;
+  border-radius: 20px;
+  transform: translateY(-100vh);
+  transition: transform 1s ease-in-out; }
+
+.show {
+  transform: translateY(0vh); }
 
 .scoreDiv {
   width: 100%;
@@ -287,7 +287,7 @@ h1 {
   font-size: 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between; }
+  justify-content: space-around; }
 
 .date {
   width: 45%;
@@ -295,7 +295,7 @@ h1 {
 
 .duration {
   width: 45%;
-  text-align: left; }
+  text-align: center; }
 
 
 /*# sourceMappingURL=index.css.map*/

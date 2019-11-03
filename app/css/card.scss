@@ -1,5 +1,19 @@
-$nbFruits: 18;
-$list: ('pomme' 'banane' 'orange' 'citronVert' 'grenade' 'abricot' 'citronJaune' 'fraise' 'pomme' 'peche' 'raisin' 'pasteque' 'prune' 'poire' 'cerise' 'framboise' 'mangue' 'bigarot');
+@mixin transformed($rotationY, $translationX) {
+	transform: rotateY($rotationY) translateX($translationX);
+}
+
+
+//generation des classes fruit
+//chaque classe affichera un sprite de l'image globale
+
+$list: ('pommeRouge' 'banane' 'orange' 'citronVert' 'grenade' 'abricot' 'citronJaune' 'fraise' 'pommeVerte' 'peche' 'raisin' 'pasteque' 'prune' 'poire' 'cerise' 'framboise' 'mangue' 'bigarot');
+
+@for $i from 1 through length($list) {
+	.#{nth($list, $i)} {
+		background: url('./images/cards.png') 0px ($i - 1)*-100px;
+		background-size: cover;
+	}
+}
 
 .card {
 	width: 100px;
@@ -13,40 +27,37 @@ $list: ('pomme' 'banane' 'orange' 'citronVert' 'grenade' 'abricot' 'citronJaune'
 		width: 100%;
 		height: auto;
 		transform: rotateY(-180deg);
+		//pour test, c'est plus facile de gagner :-);
 		//opacity: 0.5;
 	}
 }
 
+//cartes retournées
 .hideCard {
-	transform: rotateY(-180deg) translateX(-100vw);
+	@include transformed(-180deg, -100vw);
 }
 
 .showCard {
-	transform: rotateY(-180deg) translateX(0vw);
+	@include transformed(-180deg, 0vw);
 }
 
-@for $i from 1 through $nbFruits {
-	.#{nth($list, $i)} {
-		background: url('./images/cards.png') 0px ($i - 1)*-100px;
-		background-size: cover;
-	}
+//cartes découvertes
+//ces 2 classes permettent d'éviter une rotation à 180° de l'image découverte lorsque les cartes quittent le plateau
+.showDiscovered {
+	@include transformed(0deg, 0vw);
 }
 
+.hideDiscovered {
+	@include transformed(0deg, 100vw);
+}
+
+//animation découvre
 @keyframes spin {
 	from {
-		transform: rotateY(-180deg) translateX(0vw);
+		@include transformed(-180deg, 0vw);
 	}
 	to {
-		transform: rotateY(0deg) translateX(0vw);
-	}
-}
-
-@-webkit-keyframes back {
-	from {
-		transform: rotateY(0deg) translateX(0vw);
-	}
-	to {
-		transform: rotateY(180deg) translateX(0vw);
+		@include transformed(0deg, 0vw);
 	}
 }
 
@@ -54,14 +65,17 @@ $list: ('pomme' 'banane' 'orange' 'citronVert' 'grenade' 'abricot' 'citronJaune'
 	animation: spin 0.5s linear forwards;
 }
   
+
+//animation recouvre
+@-webkit-keyframes back {
+	from {
+		@include transformed(0deg, 0vw);
+	}
+	to {
+		@include transformed(180deg, 0vw);
+	}
+}
+
 .recover {
 	animation: back 0.5s linear forwards;
-}
-
-.showDiscovered {
-	transform: rotateY(0deg) translateX(0vw);
-}
-
-.hideDiscovered {
-	transform: rotateY(0deg) translateX(100vw);
 }

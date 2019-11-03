@@ -162,35 +162,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+var Card = function Card(index, fruit) {
+  _classCallCheck(this, Card);
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+  //à la création, les cartes sont cachées à la droite de l'écran
+  //le verso est visible
+  this.element = (0, _jquery["default"])("<div class='card hideCard ".concat(fruit, "' id='card").concat(index, "'/></div>"));
+  this.element.append("<img src='./images/cover.jpg?test' />"); //évite un mouvement désagréable de la carte quand on clique/glisse
 
-var Card =
-/*#__PURE__*/
-function () {
-  function Card(index, fruit) {
-    _classCallCheck(this, Card);
+  this.element.on("mousemove", function (event) {
+    event.preventDefault();
+  }); //au click, on repasse la main au manager
 
-    this.element = (0, _jquery["default"])("<div class='card hideCard ".concat(fruit, "' id='card").concat(index, "'/></div>"));
-    this.element.append("<img src='./images/cover.jpg' />");
-    this.setEvents();
-  }
-
-  _createClass(Card, [{
-    key: "setEvents",
-    value: function setEvents() {
-      this.element.on("mousemove", function (event) {
-        event.preventDefault();
-      });
-      this.element.on("click", function () {
-        manager.spin(this);
-      });
-    }
-  }]);
-
-  return Card;
-}();
+  this.element.on("click", function () {
+    manager.spin(this);
+  });
+};
 
 ;
 var _default = Card;
@@ -221,77 +208,95 @@ var Clocks =
 /*#__PURE__*/
 function () {
   function Clocks() {
-    var _this = this;
-
     _classCallCheck(this, Clocks);
 
-    //texture
-    this.textures = [new THREE.TextureLoader().load("./images/clock.png"), new THREE.TextureLoader().load("./images/clock2.png"), new THREE.TextureLoader().load("./images/clock3.png")]; //renderer
-
-    this.container = document.getElementById("gl");
-    console.dir(this.container);
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.container,
-      antialias: true,
-      alpha: true
-    });
-    this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
-    this.renderer.setPixelRatio(window.devicePixelRatio); //scene
-
-    this.scene = new THREE.Scene();
-    this.root = new THREE.Object3D();
-    this.scene.add(this.root); //camera
-
-    this.camera = new THREE.PerspectiveCamera(45, this.container.offsetWidth / this.container.offsetHeight, 0.1, 1000);
-    this.camera.position.set(0, 0, 20);
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-    this.root.add(this.camera); //light
-
-    var light = new THREE.DirectionalLight("#ffffff", 1.5);
-    light.position.set(0, 1, 1);
-    this.root.add(light); //clocks
-
-    this.clocks = new THREE.Object3D();
-    var geometry = new THREE.PlaneBufferGeometry(1, 1);
-
-    for (var i = 0; i < 30; i++) {
-      var clock = new THREE.Mesh(geometry);
-      this.randomizeClock(clock);
-      this.clocks.add(clock);
-    }
-
-    this.root.add(this.clocks);
-
-    window.onresize = function () {
-      return _this.resize();
-    };
+    this.createThreeScene();
   }
 
   _createClass(Clocks, [{
+    key: "createThreeScene",
+    value: function createThreeScene() {
+      var _this = this;
+
+      //textures
+      this.textures = [new THREE.TextureLoader().load("./images/clock.png"), new THREE.TextureLoader().load("./images/clock2.png"), new THREE.TextureLoader().load("./images/clock3.png")]; //renderer
+
+      this.container = document.getElementById("gl");
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: this.container,
+        antialias: true,
+        alpha: true
+      });
+      this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+
+      window.onresize = function () {
+        return _this.resize();
+      }; //scene
+
+
+      this.scene = new THREE.Scene();
+      this.root = new THREE.Object3D();
+      this.scene.add(this.root); //camera
+
+      this.camera = new THREE.PerspectiveCamera(45, this.container.offsetWidth / this.container.offsetHeight, 0.1, 1000);
+      this.camera.position.set(0, 0, 20);
+      this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+      this.root.add(this.camera); //light
+
+      var light = new THREE.DirectionalLight("#ffffff", 1.5);
+      light.position.set(0, 1, 1);
+      this.root.add(light); //clocks
+
+      this.clocks = new THREE.Object3D();
+      var geometry = new THREE.PlaneBufferGeometry(1, 1);
+
+      for (var i = 0; i < 30; i++) {
+        var clock = new THREE.Mesh(geometry);
+        this.randomizeClock(clock);
+        this.clocks.add(clock);
+      }
+
+      this.root.add(this.clocks);
+    } //permet de resizer le canvas en même temps que la fenêtre
+
+  }, {
     key: "resize",
     value: function resize() {
-      this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
-      this.camera.aspect = this.container.offsetWidth / this.container.offsetHeight;
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
   }, {
     key: "randomizeClock",
     value: function randomizeClock(clock) {
       var speedRef = 0.03;
-      var rotationRef = 0.1;
+      var rotationRef = 0.1; //choisit une texture aléatoire dans le tableau
+
       var texture = this.textures[Math.floor(Math.random() * this.textures.length)];
-      var mat = new THREE.MeshBasicMaterial({
-        transparent: true,
-        depthWrite: false,
-        map: texture,
-        side: THREE.DoubleSide
-      });
-      clock.material = mat;
+      this.setMaterial(clock, texture);
       var scale = Math.random() * 1.5;
       clock.scale.set(scale, scale, scale);
       clock.position.set(Math.random() * 30 - 15, Math.random() * 15 + 5, 0);
       clock.speed = speedRef + Math.random() * speedRef * 2;
-      clock.rotZ = rotationRef - Math.random() * rotationRef * 2; //		clock.rotY = rotationRef - Math.random() * rotationRef*2;
-    }
+      clock.rotZ = rotationRef - Math.random() * rotationRef * 2;
+    } //evite la création d'un nouveau matériel à chaque tick
+
+  }, {
+    key: "setMaterial",
+    value: function setMaterial(clock, texture) {
+      if (clock.material.map) clock.material.map = texture;else {
+        var mat = new THREE.MeshBasicMaterial({
+          transparent: true,
+          depthWrite: false,
+          map: texture,
+          side: THREE.DoubleSide
+        });
+        clock.material = mat;
+      }
+    } //methode appelée à chaque tick
+    //on y met à jour tous les objects et on affiche la nouvelle scene
+
   }, {
     key: "update",
     value: function update() {
@@ -302,8 +307,7 @@ function () {
       try {
         for (var _iterator = this.clocks.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var child = _step.value;
-          child.rotation.z -= child.rotZ; //			child.rotation.y -= child.rotY;
-
+          child.rotation.z -= child.rotZ;
           child.position.y -= child.speed;
           if (child.position.y < -15) this.randomizeClock(child);
         }
@@ -372,8 +376,10 @@ function () {
   _createClass(Counter, [{
     key: "start",
     value: function start(duration) {
-      this.started = true;
-      this.clock = new _three.Clock();
+      this.started = true; //compteur de temps donnant accès au temps écoulé depuis le lancement
+
+      this.clock = new _three.Clock(); //on ajoute 1 seconde pour qu'à l'affichage on commence bien à la durée sélectionnée (05:00 et non 04:59)
+
       this.duration = parseInt(duration, 10) + 1;
       this.remain = _moment["default"].utc(this.duration * 1000);
       this.display();
@@ -381,16 +387,24 @@ function () {
   }, {
     key: "display",
     value: function display() {
-      (0, _jquery["default"])(".time").html("Il vous reste ".concat(this.remain.format('mm:ss'), " minute(s)"));
+      //affichage du compteur
+      (0, _jquery["default"])(".time").html("Il vous reste ".concat(this.remain.format('mm:ss'), " minute(s)")); //calcul du temps ecoulé en poucentage pour la barre de progression
+
       var percent = Math.floor(this.clock.getElapsedTime() / (this.duration - 1) * 100);
-      (0, _jquery["default"])("#elapsed").attr("value", percent).html(percent + " %");
-      this.lasted = Math.floor(this.clock.getElapsedTime() * 1000);
+      (0, _jquery["default"])("#elapsed").attr("value", percent).html(percent + " %"); //stockage de la duree de la partie
+
+      this.lasted = Math.floor(this.clock.getElapsedTime() * 1000); //check si le temps imparti est écoulé
+
       if (percent >= 100) this.ended = true;
     }
   }, {
     key: "update",
+    //appelé à chaque tick si le jeu est démarré et non terminé
+    //et si le compteur est démarré (started = true) et non termine(ended = false)
     value: function update() {
-      this.remain = _moment["default"].utc(this.duration * 1000 - this.clock.getElapsedTime() * 1000);
+      //mise à jour du temps restant ...
+      this.remain = _moment["default"].utc(this.duration * 1000 - this.clock.getElapsedTime() * 1000); // ... et de l'affichage
+
       this.display();
     }
   }]);
@@ -406,15 +420,15 @@ exports["default"] = _default;
 require.register("js/Manager.js", function(exports, require, module) {
 "use strict";
 
+require("moment/locale/fr");
+
+require("babel-polyfill");
+
 var _jquery = _interopRequireDefault(require("jquery"));
 
 var _axios = _interopRequireDefault(require("axios"));
 
 var _moment = _interopRequireDefault(require("moment"));
-
-require("moment/locale/fr");
-
-require("babel-polyfill");
 
 var _Card = _interopRequireDefault(require("./Card"));
 
@@ -426,7 +440,7 @@ var _Scores = _interopRequireDefault(require("./Scores"));
 
 var _Clocks = _interopRequireDefault(require("./Clocks"));
 
-var tools = _interopRequireWildcard(require("./utils"));
+var tools = _interopRequireWildcard(require("./tools"));
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
@@ -450,8 +464,8 @@ function () {
   function Manager() {
     _classCallCheck(this, Manager);
 
-    this.clocks = new _Clocks["default"]();
     this.init();
+    this.clocks = new _Clocks["default"]();
     this.update();
   }
 
@@ -498,11 +512,14 @@ function () {
     value: function setCards() {
       var _this2 = this;
 
-      //creation de la liste de fruits réduite à 14
-      var fruits = ['pomme', 'banane', 'orange', 'citronVert', 'grenade', 'abricot', 'citronJaune', 'fraise', 'pomme', 'peche', 'raisin', 'pasteque', 'prune', 'poire', 'cerise', 'framboise', 'mangue', 'bigarot'];
-      this.tools.randomizeArray(fruits).slice(14); //positions aléatoires
+      //on crée 28 cartes => 14 paires
+      //creation de la liste de 14 fruits choisis aléatoirement parmi les 18 proposés
+      var fruits = ['pommeRouge', 'banane', 'orange', 'citronVert', 'grenade', 'abricot', 'citronJaune', 'fraise', 'pommeVerte', 'peche', 'raisin', 'pasteque', 'prune', 'poire', 'cerise', 'framboise', 'mangue', 'bigarot'];
+      fruits = this.tools.randomizeArray(fruits).slice(0, 14); //positions aléatoires dans le plateau pour les mélanger
 
-      var ranks = this.tools.randomizeArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]); //creation du tableau de cartes aléatoire
+      var ranks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]; //		for (let i=0; i<5; i++)
+
+      ranks = this.tools.randomizeArray(ranks); //on stocke nos 28 cartes mélangées dans un tableau d'éléments
 
       var elements = [];
       var fruitIndex = 0;
@@ -511,16 +528,19 @@ function () {
         elements[ranks[i]] = new _Card["default"](i, fruits[fruitIndex]).element; //toutes les 2 cartes, on change de fruit
 
         if (i % 2 === 1) fruitIndex++;
-      } //ajout du html dans la div plateau
+      } //on ajoute les cartes aux plateau ...
 
 
-      (0, _jquery["default"])(".board").append(elements);
+      (0, _jquery["default"])(".board").append(elements); // ... et on les anime pour l'affichage
+
       setTimeout(function () {
         _this2.tools.showDecal(".card", 50);
       }, 300);
     }
   }, {
     key: "showScores",
+    //recupère les 5 meilleurs scores en base
+    //et les affiche dans le backdrop
     value: function () {
       var _showScores = _asyncToGenerator(
       /*#__PURE__*/
@@ -532,7 +552,7 @@ function () {
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return this.scores.init();
+                return this.scores.get();
 
               case 3:
                 html = _context.sent;
@@ -560,7 +580,9 @@ function () {
       }
 
       return showScores;
-    }()
+    }() //champ de saisie du temps : permet de valider son choix avec 'Enter'
+    //au lieu de cliquer sur valider
+
   }, {
     key: "checkKey",
     value: function checkKey(event) {
@@ -571,19 +593,27 @@ function () {
     value: function startGame() {
       var _this3 = this;
 
-      this.gameStarted = true;
-      (0, _jquery["default"])(".backdrop").removeClass("show");
+      this.gameStarted = true; //le jeu commence
+      //on retire le backdrop s'il est toujours visible
+
+      (0, _jquery["default"])(".backdrop").removeClass("show"); //on vérifie d'abord si la valeur de temps est valide
+      //le cas échéant on affiche une erreur
+
       (0, _jquery["default"])(".error").html("");
       var val = parseInt((0, _jquery["default"])(".current #duration").val(), 10);
 
-      if (!val) {
+      if (!val || val < 0) {
+        //val vaut Nan ou 0
         (0, _jquery["default"])(".error").html("Oups ... J'ai pas compris !");
         (0, _jquery["default"])(".current #duration").val("");
       } else if (val > 59) {
+        // bon y a 28 cartes, personne n'a besoin de plus d'une heure !!
         (0, _jquery["default"])(".error").html("Faut pas exag&eacute;rer ... 59 minutes max !");
         (0, _jquery["default"])(".current #duration").val("");
       } else {
+        //on laisse 300ms à l'animation du bouton 
         setTimeout(function () {
+          //et on démarre le compteur de temps
           var duration = val * 60;
           (0, _jquery["default"])(".beforeCount").css({
             display: "none"
@@ -601,8 +631,10 @@ function () {
     value: function spin(target) {
       var _this4 = this;
 
-      //on ne retourne une carte que si moins de 2 cartes sont retournées
-      //et si cette carte n'est pas déjà retournée
+      //on ne retourne une carte que si :
+      // - le jeu est démarré
+      // - moins de 2 cartes sont retournées
+      // - la carte cliquée n'est pas déjà retournée
       if (this.gameStarted && this.nbClicks < 2 && !(0, _jquery["default"])(target).hasClass("discover")) {
         if (!this.fruitClicked) {
           //on retourne la première carte
@@ -620,15 +652,16 @@ function () {
             this.nbPairs++;
           } else {
             setTimeout(function () {
+              // IMPORTANT ! sans ce test ce timeout peut se déclencher APRES la fin du jeu
+              // et permettre au joueur de retourner des cartes même s'il a perdu
               if (!_this4.gameEnded) _this4.nbClicks = 0;
             }, 2000);
           } //si toutes les cartes sont retournées, on clôture le jeu
 
 
           if (this.nbPairs === 14) {
+            //on conserve la duree de la partie pour stockage
             this.gameLasted = this.counter.lasted;
-            console.dir(this.counter);
-            console.log(this.gameLasted);
             this.endGame(true);
           }
         }
@@ -640,18 +673,21 @@ function () {
       var _this5 = this;
 
       this.nbClicks = 3;
-      this.gameEnded = true;
+      this.gameEnded = true; //on laisse 500ms à la dernière carte pour se retourner en entier
+
       setTimeout(function () {
         (0, _jquery["default"])(".counting").css({
           display: "none"
         });
         (0, _jquery["default"])(".again").css({
           display: "flex"
-        });
+        }); //on applique les classes css 'cartes retournée' pour éviter un flip à 180°
+
         (0, _jquery["default"])(".discover").addClass("showDiscovered");
         (0, _jquery["default"])(".card").removeClass("recover").removeClass("discover");
 
         if (won) {
+          //si la partie est gagné, on stocke le résultat en base
           _this5.scores.add({
             date: (0, _moment["default"])(Date.now()).format("dddd D MMMM YYYY, HH[h]mm"),
             duration: _this5.gameLasted
@@ -669,9 +705,12 @@ function () {
     }
   }, {
     key: "update",
+    // exécuté à chaque tick
     value: function update() {
       var _this6 = this;
 
+      //mise à jour du compteur de temps
+      //on n'exécute cette partie que si le jeu est en cours et qu'il reste du temps
       if (this.gameStarted && !this.gameEnded) {
         if (this.counter && this.counter.started) {
           if (this.counter.ended) {
@@ -680,9 +719,11 @@ function () {
             this.counter = null;
           } else this.counter.update();
         }
-      }
+      } //mise à jour des positions, rotations, ... des 'clocks'
 
-      this.clocks.update();
+
+      this.clocks.update(); //et on recommence au tick suivant
+
       requestAnimationFrame(function () {
         return _this6.update();
       });
@@ -723,29 +764,31 @@ function () {
   }
 
   _createClass(Scores, [{
-    key: "init",
-    value: function init() {
+    key: "get",
+    //le manager utilise le mécanisme 'async/await' pour récupérer les meilleurs scores
+    //on lui retourne une promesse afin qu'il "attende" les résultats avant de les afficher
+    value: function get() {
       var _this = this;
 
+      //on demande à la base les 5 meilleurs enregistrements (avec le champ 'duration' le plus petit)
       return _axios["default"].get("http://localhost:3000/scores").then(function (result) {
         var resp = result.data;
-        var tab = [];
+        var results = [];
 
         for (var _i = 0, _Object$keys = Object.keys(resp); _i < _Object$keys.length; _i++) {
           var score = _Object$keys[_i];
-          tab.push(resp[score]);
-        }
+          results.push(resp[score]);
+        } //PERTURBANT : le serveur firebase sélectionne correctement les enregistrements
+        //mais lorsqu'il les retourne, iles ne sont pas triés !! 
+        //(https://firebase.google.com/docs/database/rest/retrieve-data#section-rest-ordered-data)
+        //on le retrie donc ici, d'où l'importance de ne récupérer qu'un nombre limité d'enregistrements
 
-        tab = tab.sort(function (el1, el2) {
+
+        results = results.sort(function (el1, el2) {
           return el1.duration - el2.duration;
         });
-        return _this.html(tab);
+        return _this.html(results);
       });
-    }
-  }, {
-    key: "add",
-    value: function add(obj) {
-      _axios["default"].post("http://localhost:3000/score", obj);
     }
   }, {
     key: "html",
@@ -758,6 +801,8 @@ function () {
       try {
         for (var _iterator = results[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var result = _step.value;
+          //la duree est stockée en nb de secondes pour permettre le tri
+          //on la reformatte ici pour l'affichage
           html = html.concat("<div class='score'>\n\t\t\t\t<div class='date'>".concat(result.date, "</div>\n\t\t\t\t<div class='duration'>").concat(_moment["default"].utc(result.duration).format('mm:ss'), "</div></div>"));
         }
       } catch (err) {
@@ -777,6 +822,16 @@ function () {
 
       html = html.concat("</div>");
       return html;
+    } //ajout d'un enregistrement quand la partie est gagnée
+
+  }, {
+    key: "add",
+    value: function add(obj) {
+      _axios["default"].post("http://localhost:3000/score", obj).then(function (resp) {
+        console.log(resp.data);
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }]);
 
@@ -816,7 +871,8 @@ function () {
   _createClass(Spinner, [{
     key: "spin",
     value: function spin(target, stored) {
-      this.toggle([target], "recover", "discover", "none");
+      this.toggle([target], "recover", "discover", "none"); //si une 1ère carte est stockée, on évalue la paire
+
       if (stored) this.eval(target, stored);
     }
   }, {
@@ -824,30 +880,38 @@ function () {
     value: function _eval(target, stored) {
       var _this = this;
 
-      this.pair = true;
+      //cas par défaut, soyons positifs !
+      this.pair = true; //on compare les classes css
+      //2 cartes identiques auront la même classes fruit
 
       if (target.className !== stored.className) {
-        this.pair = false;
+        this.pair = false; //on laisse les cartes découvertes 1.5s pour qu'on puisse les mémoriser
+        //et on les retourne
+
         setTimeout(function () {
           _this.toggle([target, stored], "discover", "recover", "block");
         }, 1500);
       }
-    }
+    } //l'image du fruit est dans la propriété background
+    //on utilise une image dans la div 'card' pour simuler la carte retournée
+    //l'argument display sert à gérer l'apparition/disparition de ce "verso" de la carte
+    //on utilise un tableau de cibles afin de pouvoir animer 2 cartes en même temps
+
   }, {
     key: "toggle",
-    value: function toggle(targets, from, to, display, stored) {
+    value: function toggle(targets, from, to, display) {
       (0, _jquery["default"])(targets[0]).removeClass(from).addClass(to);
-      if (targets[1]) (0, _jquery["default"])(targets[1]).removeClass(from).addClass(to);
+      if (targets[1]) (0, _jquery["default"])(targets[1]).removeClass(from).addClass(to); //l'animation est linéaire (régulière)
+      //à la moitié de l'animation (250ms) la carte n'est qu'un trait à l'écran
+      //on profite de cette instant pour aficher/cacher le verso
+
       setTimeout(function () {
         (0, _jquery["default"])("#" + targets[0].id + " > img").css({
           display: display
         });
-
-        if (targets[1]) {
-          (0, _jquery["default"])("#" + targets[1].id + " > img").css({
-            display: display
-          });
-        }
+        if (targets[1]) (0, _jquery["default"])("#" + targets[1].id + " > img").css({
+          display: display
+        });
       }, 250);
     }
   }]);
@@ -859,7 +923,7 @@ var _default = Spinner;
 exports["default"] = _default;
 });
 
-require.register("js/utils.js", function(exports, require, module) {
+require.register("js/tools.js", function(exports, require, module) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -874,11 +938,27 @@ var _this = void 0;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var randomizeArray = function randomizeArray(array) {
-  array.sort(function () {
-    return .5 - Math.random();
-  });
-  return array;
-};
+  var res = [];
+  var nbItems = 0;
+
+  while (nbItems < array.length) {
+    var index = Math.round(Math.random() * (array.length - 1));
+    if (res[index] === undefined) if (res[index - 1] === undefined || res[index - 1] !== array[nbItems] + 1 && res[index - 1] !== array[nbItems] - 1) if (res[index + 1] === undefined || res[index + 1] !== array[nbItems] + 1 && res[index + 1] !== array[nbItems] - 1) {
+      res[index] = array[nbItems];
+      nbItems++;
+    }
+  }
+
+  return res;
+  /*
+  	array.sort(function() {
+  		//renvoie une valeur aléatoire comprise entre -5 et 5
+  	  	return 5 - Math.random()*10;
+  	});
+  	return array;*/
+}; //gère le changement d'état du <select> de durée
+//si le choix est 'choose', on affiche le champ de saisie
+
 
 exports.randomizeArray = randomizeArray;
 
@@ -894,7 +974,8 @@ var checkDuration = function checkDuration() {
     });
     (0, _jquery["default"])(".beforeCount.v2 input").focus();
   }
-};
+}; //animations boutons
+
 
 exports.checkDuration = checkDuration;
 
@@ -906,28 +987,37 @@ exports.press = press;
 
 var release = function release(event) {
   (0, _jquery["default"])(event.target).removeClass("pressed").addClass("released");
-};
+}; //permet d'animer une collection d'éléments avec un décalage dans l'exécution
+//on utilise pour ce faire des classes css de la forme hideXXX et showXXX
+//le mécanisme show affiche les éléments de 0 à x
+//hide var traiter les éléments de x à 0 
+//(dans notre cas, évite que les cartes se chevauchent en disparaissant)
+
 
 exports.release = release;
 
-var showDecal = function showDecal(selector, delay) {
+var showDecal = function showDecal(selector) {
+  var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
   (0, _jquery["default"])(selector).each(function (id, element) {
     (0, _jquery["default"])(element).attr("class", (0, _jquery["default"])(element).attr("class").replace(new RegExp("hide", 'g'), "show")).css({
-      "transition-delay": id * (delay ? delay : 100) + "ms"
+      "transition-delay": id * delay + "ms"
     });
   });
 };
 
 exports.showDecal = showDecal;
 
-var hideDecal = function hideDecal(selector, delay) {
-  var from = (0, _jquery["default"])(selector).length * (delay ? delay : 100);
+var hideDecal = function hideDecal(selector) {
+  var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+  var from = (0, _jquery["default"])(selector).length * delay;
   (0, _jquery["default"])(selector).each(function (id, element) {
     (0, _jquery["default"])(element).attr("class", (0, _jquery["default"])(element).attr("class").replace(new RegExp("show", 'g'), "hide")).css({
-      "transition-delay": from - id * (delay ? delay : 100) + "ms"
+      "transition-delay": from - id * delay + "ms"
     });
   });
-};
+}; //affiche le backdrop
+//on utilise la fonction func pour gérer le contenu
+
 
 exports.hideDecal = hideDecal;
 

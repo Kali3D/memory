@@ -10,10 +10,13 @@
 	<canvas id="gl"></canvas>
 
 	<!-- titre -->
-	<h1 class="shadowed">Jeu du memory</h1>
+	<h1>Jeu du memory</h1>
 
 	<!-- plateau de jeu -->
 	<div class="board"></div>
+
+	<!-- Erreur de saisie dans l'input -->
+	<div class="error"></div>
 
 	<!-- séléction du temps et compteur -->
 	<div class="counter">
@@ -47,8 +50,6 @@
 			<div class="button" onMouseDown="manager.tools.press(event);" onMouseUp="manager.tools.release(event);manager.reset();">Encore !</div>
 		</div>
 	</div>
-	<!-- Erreur de saisie dans l'input -->
-	<div class="error"></div>
 
 	<!-- messages flottants -->
 	<div class="backdrop"></div>

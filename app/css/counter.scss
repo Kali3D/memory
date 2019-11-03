@@ -1,16 +1,25 @@
+@mixin margin($left) {
+	margin: $left auto;
+}
+
+%flexHidden {
+	display: none;
+	align-items: center;
+}
+
 .counter {
+	@include margin(20px);
 	width: 50%;
 	background-color: #d1f1e2;
 	border: 3px solid white;
 	border-radius: 20px;
-	margin: 20px auto;
 	box-shadow: 5px 5px 10px #1c4237;
 	font-size: 20px;
 }
 
 .beforeCount {
 	width: 500px;
-	margin: 20px auto;
+	@include margin(20px);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -23,26 +32,30 @@
 	}
 }
 
+//div de saisie du temps dans un champ
 .v2, {
 	display: none;
 }
 
-.counting {
-	display: none;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-between;
-	margin: 20px auto;
-}
+//divs cachées qui serviront au fur et à mesure du jeu
 
-.again {
-	display: none;
-	align-items: center;
-	justify-content: center;
-	margin: 20px auto;
+//compteur en marche
+.counting {
+	@extend %flexHidden;
+	flex-direction: column;
+	justify-content: space-between;
+	@include margin(20px);
 }
 
 .time {
-	margin: 10px auto;
+	@include margin(10px);
+}
+
+
+//fin de jeu
+.again {
+	@extend %flexHidden;
+	justify-content: center;
+	@include margin(20px);
 }
 
