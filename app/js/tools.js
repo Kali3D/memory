@@ -6,23 +6,20 @@ export const randomizeArray = (array) => {
 	let nbItems = 0;
 	while(nbItems < array.length) {
 		let index = Math.round(Math.random()*(array.length-1));
-		if (res[index] === undefined)
+		if (res[index] === undefined) {
+			if (nbItems === array.length-1) {
+				res[index] = array[nbItems];
+				nbItems++;
+			} else {
 			if (res[index-1] === undefined || (res[index-1] !== array[nbItems] + 1 && res[index-1] !== array[nbItems] - 1))
 				if (res[index+1] === undefined || (res[index+1] !== array[nbItems] + 1 && res[index+1] !== array[nbItems] - 1)) {
 					res[index] = array[nbItems];
 					nbItems++;
 				}
+			}
+		}
 	}
 	return res;
-
-
-
-/*
-	array.sort(function() {
-		//renvoie une valeur aléatoire comprise entre -5 et 5
-	  	return 5 - Math.random()*10;
-	});
-	return array;*/
 }
 
 //gère le changement d'état du <select> de durée
