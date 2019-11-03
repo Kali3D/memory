@@ -6,9 +6,18 @@
 	<title>Memory</title>
 </head>
 <body>
-	<h1>Jeu du memory</h1>
+	<!-- pluies de clocks -->
+	<canvas id="gl"></canvas>
+
+	<!-- titre -->
+	<h1 class="shadowed">Jeu du memory</h1>
+
+	<!-- plateau de jeu -->
 	<div class="board"></div>
+
+	<!-- séléction du temps et compteur -->
 	<div class="counter">
+		<!-- séléction dans une liste déroulante -->
 		<div class="beforeCount v1 current">
 			<span>Je le fais en :</span>
 			<select name="duration" id="duration" onChange="manager.tools.checkDuration();">
@@ -22,22 +31,29 @@
 			</select>
 			<div class="button" onMouseDown="manager.tools.press(event);" onMouseUp="manager.tools.release(event);manager.startGame();">Valider</div>
 		</div>
+		<!-- saisie du temps dans un champs -->
 		<div class="beforeCount v2">
 			<span>Nb minutes :</span>
 			<input name="duration" id="duration" type="number" onKeyUp="manager.checkKey(event);"/>
 			<div class="button" onMouseDown="manager.tools.press(event);" onMouseUp="manager.tools.release(event);manager.startGame();">Valider</div>
 		</div>
+		<!-- compteur -->
 		<div class="counting">
 			<div class="time"></div>
 			<progress id="elapsed" max="100" value=""></progress>
 		</div>
+		<!-- A la fin du jeu, on propose de recommencer -->
 		<div class="again">
 			<div class="button" onMouseDown="manager.tools.press(event);" onMouseUp="manager.tools.release(event);manager.reset();">Encore !</div>
 		</div>
 	</div>
+	<!-- Erreur de saisie dans l'input -->
 	<div class="error"></div>
-	<div class="backdrop">
-	</div>
+
+	<!-- messages flottants -->
+	<div class="backdrop"></div>
+
+	<!-- Librairies js et démarrage de l'application -->
 	<script src="librairies.js"></script>
 	<script src="index.js"></script>
 	<script>

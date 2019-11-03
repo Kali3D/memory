@@ -36,3 +36,13 @@ export const hideDecal = (selector, delay) => {
 		$(element).attr("class", $(element).attr("class").replace(new RegExp("show", 'g'), "hide")).css({"transition-delay": (from - id*(delay ? delay : 100))+"ms"});
 	});
 };
+
+export const showBackdrop = (duration, func) => {
+	$(".backdrop").addClass("show");
+	if (typeof func === "function")
+		func.apply(this);
+	setTimeout(() => {
+		$(".backdrop").removeClass("show");
+	}, duration);
+};
+

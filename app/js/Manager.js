@@ -1,19 +1,30 @@
 import $ from "jquery";
+import axios from "axios";
+import moment from "moment";
+import "moment/locale/fr";
+import "babel-polyfill"
 
 import Card from "./Card";
 import Spinner from "./Spinner";
 import Counter from "./Counter";
+import Scores from "./Scores";
+import Clocks from "./Clocks";
+
 import * as tools from "./utils";
 
 class Manager {
 
 	constructor() {
+		this.clocks = new Clocks();
 		this.init();
+		this.update();
+
 	}
 
 	init() {
 		this.spinner = new Spinner();
 		this.counter = new Counter();
+		this.scores = new Scores();
 		this.fruitClicked = null;
 		this.nbClicks = 0;
 		this.nbPairs = 0;
@@ -63,17 +74,15 @@ class Manager {
 		}, 300);
 	};
 
-	showBackdrop(duration, func) {
-		$(".backdrop").addClass("show");
-		if (typeof func === "function")
-			func.apply(this);
-		setTimeout(() => {
-			$(".backdrop").removeClass("show");
-		}, duration);
-	}
-
-	showScores() {
-		this.showBackdrop(3000);
+	async showScores() {
+		try {
+			const html = await this.scores.init();
+			this.tools.showBackdrop(5000, () => {
+				$(".backdrop").html(html);
+			});
+		} catch(error) {
+			console.dir(error);
+		}
 	}
 	
 
@@ -99,7 +108,6 @@ class Manager {
 				$(".beforeCount").css({display: "none"});
 				$(".counting").css({display: "flex"});
 				this.counter.start(duration);
-				this.update();
 			}, 300);
 		}
 	};
@@ -148,11 +156,12 @@ class Manager {
 			$(".discover").addClass("showDiscovered");
 			$(".card").removeClass("recover").removeClass("discover");
 			if (won) {
-				this.showBackdrop(5000, () => {
-					$(".backdrop").html(`Bravo, c'est gagn&eacute; !!!<br />Vous avez trouv&eacute; en ${this.gameLasted} minute(s)`);
+				this.scores.add({date: moment(Date.now()).format("dddd D MMMM YYYY, HH[h]mm"), duration: this.gameLasted});
+				this.tools.showBackdrop(5000, () => {
+					$(".backdrop").html(`Bravo, c'est gagn&eacute; !!!<br />Vous avez trouv&eacute; en ${moment.utc(this.gameLasted).format('mm:ss')} minute(s)`);
 				});
 			} else {
-				this.showBackdrop(5000, () => {
+				this.tools.showBackdrop(5000, () => {
 					$(".backdrop").html("Arf ..., c'est perdu !");
 				});
 			}
@@ -160,16 +169,17 @@ class Manager {
 	};
 
 	update() {
-		if (!this.gameEnded && this.counter && this.counter.started) {
-			 if (this.counter.ended) {
-				this.endGame(false);
-				this.gameLasted = this.counter.lasted;
-				console.dir(this.counter);
-				console.log(this.gameLasted);
-				this.counter = null;
-			} else
-				this.counter.update();
+		if (this.gameStarted && !this.gameEnded) {
+			if (this.counter && this.counter.started) {
+				if (this.counter.ended) {
+					this.endGame(false);
+					this.gameLasted = this.counter.lasted;
+					this.counter = null;
+				} else
+					this.counter.update();
+			}
 		}
+		this.clocks.update();
 		requestAnimationFrame(() => this.update());
 	};
 }

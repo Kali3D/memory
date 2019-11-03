@@ -197,6 +197,143 @@ var _default = Card;
 exports["default"] = _default;
 });
 
+require.register("js/Clocks.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var THREE = _interopRequireWildcard(require("three"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Clocks =
+/*#__PURE__*/
+function () {
+  function Clocks() {
+    var _this = this;
+
+    _classCallCheck(this, Clocks);
+
+    //texture
+    this.textures = [new THREE.TextureLoader().load("./images/clock.png"), new THREE.TextureLoader().load("./images/clock2.png"), new THREE.TextureLoader().load("./images/clock3.png")]; //renderer
+
+    this.container = document.getElementById("gl");
+    console.dir(this.container);
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.container,
+      antialias: true,
+      alpha: true
+    });
+    this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
+    this.renderer.setPixelRatio(window.devicePixelRatio); //scene
+
+    this.scene = new THREE.Scene();
+    this.root = new THREE.Object3D();
+    this.scene.add(this.root); //camera
+
+    this.camera = new THREE.PerspectiveCamera(45, this.container.offsetWidth / this.container.offsetHeight, 0.1, 1000);
+    this.camera.position.set(0, 0, 20);
+    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.root.add(this.camera); //light
+
+    var light = new THREE.DirectionalLight("#ffffff", 1.5);
+    light.position.set(0, 1, 1);
+    this.root.add(light); //clocks
+
+    this.clocks = new THREE.Object3D();
+    var geometry = new THREE.PlaneBufferGeometry(1, 1);
+
+    for (var i = 0; i < 30; i++) {
+      var clock = new THREE.Mesh(geometry);
+      this.randomizeClock(clock);
+      this.clocks.add(clock);
+    }
+
+    this.root.add(this.clocks);
+
+    window.onresize = function () {
+      return _this.resize();
+    };
+  }
+
+  _createClass(Clocks, [{
+    key: "resize",
+    value: function resize() {
+      this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
+      this.camera.aspect = this.container.offsetWidth / this.container.offsetHeight;
+    }
+  }, {
+    key: "randomizeClock",
+    value: function randomizeClock(clock) {
+      var speedRef = 0.03;
+      var rotationRef = 0.1;
+      var texture = this.textures[Math.floor(Math.random() * this.textures.length)];
+      var mat = new THREE.MeshBasicMaterial({
+        transparent: true,
+        depthWrite: false,
+        map: texture,
+        side: THREE.DoubleSide
+      });
+      clock.material = mat;
+      var scale = Math.random() * 1.5;
+      clock.scale.set(scale, scale, scale);
+      clock.position.set(Math.random() * 30 - 15, Math.random() * 15 + 5, 0);
+      clock.speed = speedRef + Math.random() * speedRef * 2;
+      clock.rotZ = rotationRef - Math.random() * rotationRef * 2; //		clock.rotY = rotationRef - Math.random() * rotationRef*2;
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.clocks.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var child = _step.value;
+          child.rotation.z -= child.rotZ; //			child.rotation.y -= child.rotY;
+
+          child.position.y -= child.speed;
+          if (child.position.y < -15) this.randomizeClock(child);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      this.renderer.render(this.scene, this.camera);
+    }
+  }]);
+
+  return Clocks;
+}();
+
+;
+var _default = Clocks;
+exports["default"] = _default;
+});
+
 require.register("js/Counter.js", function(exports, require, module) {
 "use strict";
 
@@ -247,7 +384,7 @@ function () {
       (0, _jquery["default"])(".time").html("Il vous reste ".concat(this.remain.format('mm:ss'), " minute(s)"));
       var percent = Math.floor(this.clock.getElapsedTime() / (this.duration - 1) * 100);
       (0, _jquery["default"])("#elapsed").attr("value", percent).html(percent + " %");
-      this.lasted = _moment["default"].utc(this.clock.getElapsedTime() * 1000).format('mm:ss');
+      this.lasted = Math.floor(this.clock.getElapsedTime() * 1000);
       if (percent >= 100) this.ended = true;
     }
   }, {
@@ -271,11 +408,23 @@ require.register("js/Manager.js", function(exports, require, module) {
 
 var _jquery = _interopRequireDefault(require("jquery"));
 
+var _axios = _interopRequireDefault(require("axios"));
+
+var _moment = _interopRequireDefault(require("moment"));
+
+require("moment/locale/fr");
+
+require("babel-polyfill");
+
 var _Card = _interopRequireDefault(require("./Card"));
 
 var _Spinner = _interopRequireDefault(require("./Spinner"));
 
 var _Counter = _interopRequireDefault(require("./Counter"));
+
+var _Scores = _interopRequireDefault(require("./Scores"));
+
+var _Clocks = _interopRequireDefault(require("./Clocks"));
 
 var tools = _interopRequireWildcard(require("./utils"));
 
@@ -284,6 +433,10 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -297,7 +450,9 @@ function () {
   function Manager() {
     _classCallCheck(this, Manager);
 
+    this.clocks = new _Clocks["default"]();
     this.init();
+    this.update();
   }
 
   _createClass(Manager, [{
@@ -305,6 +460,7 @@ function () {
     value: function init() {
       this.spinner = new _Spinner["default"]();
       this.counter = new _Counter["default"]();
+      this.scores = new _Scores["default"]();
       this.fruitClicked = null;
       this.nbClicks = 0;
       this.nbPairs = 0;
@@ -364,19 +520,47 @@ function () {
       }, 300);
     }
   }, {
-    key: "showBackdrop",
-    value: function showBackdrop(duration, func) {
-      (0, _jquery["default"])(".backdrop").addClass("show");
-      if (typeof func === "function") func.apply(this);
-      setTimeout(function () {
-        (0, _jquery["default"])(".backdrop").removeClass("show");
-      }, duration);
-    }
-  }, {
     key: "showScores",
-    value: function showScores() {
-      this.showBackdrop(3000);
-    }
+    value: function () {
+      var _showScores = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var html;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                _context.next = 3;
+                return this.scores.init();
+
+              case 3:
+                html = _context.sent;
+                this.tools.showBackdrop(5000, function () {
+                  (0, _jquery["default"])(".backdrop").html(html);
+                });
+                _context.next = 10;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](0);
+                console.dir(_context.t0);
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[0, 7]]);
+      }));
+
+      function showScores() {
+        return _showScores.apply(this, arguments);
+      }
+
+      return showScores;
+    }()
   }, {
     key: "checkKey",
     value: function checkKey(event) {
@@ -409,8 +593,6 @@ function () {
           });
 
           _this3.counter.start(duration);
-
-          _this3.update();
         }, 300);
       }
     }
@@ -470,11 +652,16 @@ function () {
         (0, _jquery["default"])(".card").removeClass("recover").removeClass("discover");
 
         if (won) {
-          _this5.showBackdrop(5000, function () {
-            (0, _jquery["default"])(".backdrop").html("Bravo, c'est gagn&eacute; !!!<br />Vous avez trouv&eacute; en ".concat(_this5.gameLasted, " minute(s)"));
+          _this5.scores.add({
+            date: (0, _moment["default"])(Date.now()).format("dddd D MMMM YYYY, HH[h]mm"),
+            duration: _this5.gameLasted
+          });
+
+          _this5.tools.showBackdrop(5000, function () {
+            (0, _jquery["default"])(".backdrop").html("Bravo, c'est gagn&eacute; !!!<br />Vous avez trouv&eacute; en ".concat(_moment["default"].utc(_this5.gameLasted).format('mm:ss'), " minute(s)"));
           });
         } else {
-          _this5.showBackdrop(5000, function () {
+          _this5.tools.showBackdrop(5000, function () {
             (0, _jquery["default"])(".backdrop").html("Arf ..., c'est perdu !");
           });
         }
@@ -485,16 +672,17 @@ function () {
     value: function update() {
       var _this6 = this;
 
-      if (!this.gameEnded && this.counter && this.counter.started) {
-        if (this.counter.ended) {
-          this.endGame(false);
-          this.gameLasted = this.counter.lasted;
-          console.dir(this.counter);
-          console.log(this.gameLasted);
-          this.counter = null;
-        } else this.counter.update();
+      if (this.gameStarted && !this.gameEnded) {
+        if (this.counter && this.counter.started) {
+          if (this.counter.ended) {
+            this.endGame(false);
+            this.gameLasted = this.counter.lasted;
+            this.counter = null;
+          } else this.counter.update();
+        }
       }
 
+      this.clocks.update();
       requestAnimationFrame(function () {
         return _this6.update();
       });
@@ -505,6 +693,99 @@ function () {
 }();
 
 module.exports = Manager;
+});
+
+require.register("js/Scores.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _moment = _interopRequireDefault(require("moment"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Scores =
+/*#__PURE__*/
+function () {
+  function Scores() {
+    _classCallCheck(this, Scores);
+  }
+
+  _createClass(Scores, [{
+    key: "init",
+    value: function init() {
+      var _this = this;
+
+      return _axios["default"].get("http://localhost:3000/scores").then(function (result) {
+        var resp = result.data;
+        var tab = [];
+
+        for (var _i = 0, _Object$keys = Object.keys(resp); _i < _Object$keys.length; _i++) {
+          var score = _Object$keys[_i];
+          tab.push(resp[score]);
+        }
+
+        tab = tab.sort(function (el1, el2) {
+          return el1.duration - el2.duration;
+        });
+        return _this.html(tab);
+      });
+    }
+  }, {
+    key: "add",
+    value: function add(obj) {
+      _axios["default"].post("http://localhost:3000/score", obj);
+    }
+  }, {
+    key: "html",
+    value: function html(results) {
+      var html = "<div class='scoreDiv'>\n\t\t<div class=\"principe\">Retrouvez toutes les paires dans le temps imparti et c'est gagn\xE9 !</div>\n\t\t<div class='best'>5 meilleurs scores :</div>";
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = results[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var result = _step.value;
+          html = html.concat("<div class='score'>\n\t\t\t\t<div class='date'>".concat(result.date, "</div>\n\t\t\t\t<div class='duration'>").concat(_moment["default"].utc(result.duration).format('mm:ss'), "</div></div>"));
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      html = html.concat("</div>");
+      return html;
+    }
+  }]);
+
+  return Scores;
+}();
+
+;
+var _default = Scores;
+exports["default"] = _default;
 });
 
 require.register("js/Spinner.js", function(exports, require, module) {
@@ -584,9 +865,11 @@ require.register("js/utils.js", function(exports, require, module) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.hideDecal = exports.showDecal = exports.release = exports.press = exports.checkDuration = exports.randomizeArray = void 0;
+exports.showBackdrop = exports.hideDecal = exports.showDecal = exports.release = exports.press = exports.checkDuration = exports.randomizeArray = void 0;
 
 var _jquery = _interopRequireDefault(require("jquery"));
+
+var _this = void 0;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -647,6 +930,16 @@ var hideDecal = function hideDecal(selector, delay) {
 };
 
 exports.hideDecal = hideDecal;
+
+var showBackdrop = function showBackdrop(duration, func) {
+  (0, _jquery["default"])(".backdrop").addClass("show");
+  if (typeof func === "function") func.apply(_this);
+  setTimeout(function () {
+    (0, _jquery["default"])(".backdrop").removeClass("show");
+  }, duration);
+};
+
+exports.showBackdrop = showBackdrop;
 });
 
 require.alias("buffer/index.js", "buffer");

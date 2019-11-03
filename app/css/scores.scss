@@ -1,0 +1,41 @@
+.scoreDiv {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.principe {
+	margin: 30px 0px;
+	width: 100%;
+	font-size: 24px;
+	text-align: center;
+}
+
+.best {
+	width: 80%;
+	font-size: 30px;
+	margin: 20px 20px;
+	text-align: left;
+}
+
+.score {
+	width: 100%;
+	min-height: 40px;
+	font-size: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.date {
+	width: 45%;
+	text-align: right;
+}
+
+.duration {
+	width: 45%;
+	text-align: left;
+}

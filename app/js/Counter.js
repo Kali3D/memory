@@ -23,7 +23,7 @@ class Counter {
 		$(".time").html(`Il vous reste ${this.remain.format('mm:ss')} minute(s)`);
 		const percent = Math.floor(this.clock.getElapsedTime()/(this.duration-1) * 100);
 		$("#elapsed").attr("value", percent).html(percent+" %");
-		this.lasted = moment.utc(this.clock.getElapsedTime()*1000).format('mm:ss');
+		this.lasted = Math.floor(this.clock.getElapsedTime()*1000);
 		if (percent >= 100)
 			this.ended = true;
 	};
