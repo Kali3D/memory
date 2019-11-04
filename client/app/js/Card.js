@@ -5,7 +5,7 @@ class Card {
 		//à la création, les cartes sont cachées à la droite de l'écran
 		//le verso est visible
 		this.element = $(`<div class='card hideCard ${fruit}' id='card${index}'/></div>`);
-		this.element.append("<img src='./images/cover.jpg?test' />");
+		this.element.append("<img src='./images/cover.jpg' />");
 
 		//évite un mouvement désagréable de la carte quand on clique/glisse
 		this.element.on("mousemove", function(event) {event.preventDefault()});

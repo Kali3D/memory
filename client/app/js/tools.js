@@ -1,26 +1,41 @@
 import $ from "jquery";
 
-export const randomizeArray = (array) => {
+export const softRandom = array => array.sort(() => 0.5 - Math.random());
 
+export const randomizeArray = (array) => {
 	const res = [];
 	let nbItems = 0;
 	while(nbItems < array.length) {
 		let index = Math.round(Math.random()*(array.length-1));
+		//si l'élément d'index 'index' n'est pas déjà rempli
 		if (res[index] === undefined) {
+			// pour le dernier élément à placer, on ne fait pas d'autres tests pour éviter une boucle infinie
 			if (nbItems === array.length-1) {
 				res[index] = array[nbItems];
 				nbItems++;
+
+			//on veut éviter au maximum que 2 éléments d'une paire se suivent
+			//les paires sont de la forme (chiffre pair, chiffre pair +1)
+			//on vérifie que les éléments précédent et suivant ne sont pas l'autre carte de la paire
+			} else if (array[nbItems]%2 !== 0) {
+				if (res[index-1] === undefined || res[index-1] !== array[nbItems] - 1) {
+					if (res[index+1] === undefined || res[index+1] !== array[nbItems] - 1) {
+						res[index] = array[nbItems];
+						nbItems++;
+					}
+				}
 			} else {
-			if (res[index-1] === undefined || (res[index-1] !== array[nbItems] + 1 && res[index-1] !== array[nbItems] - 1))
-				if (res[index+1] === undefined || (res[index+1] !== array[nbItems] + 1 && res[index+1] !== array[nbItems] - 1)) {
-					res[index] = array[nbItems];
-					nbItems++;
+				if (res[index-1] === undefined || res[index-1] !== array[nbItems] + 1) {
+					if (res[index+1] === undefined || res[index+1] !== array[nbItems] + 1) {
+						res[index] = array[nbItems];
+						nbItems++;
+					}
 				}
 			}
 		}
 	}
 	return res;
-}
+};
 
 //gère le changement d'état du <select> de durée
 //si le choix est 'choose', on affiche le champ de saisie

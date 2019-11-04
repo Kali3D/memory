@@ -168,7 +168,7 @@ var Card = function Card(index, fruit) {
   //à la création, les cartes sont cachées à la droite de l'écran
   //le verso est visible
   this.element = (0, _jquery["default"])("<div class='card hideCard ".concat(fruit, "' id='card").concat(index, "'/></div>"));
-  this.element.append("<img src='./images/cover.jpg?test' />"); //évite un mouvement désagréable de la carte quand on clique/glisse
+  this.element.append("<img src='./images/cover.jpg' />"); //évite un mouvement désagréable de la carte quand on clique/glisse
 
   this.element.on("mousemove", function (event) {
     event.preventDefault();
@@ -515,7 +515,7 @@ function () {
       //on crée 28 cartes => 14 paires
       //creation de la liste de 14 fruits choisis aléatoirement parmi les 18 proposés
       var fruits = ['pommeRouge', 'banane', 'orange', 'citronVert', 'grenade', 'abricot', 'citronJaune', 'fraise', 'pommeVerte', 'peche', 'raisin', 'pasteque', 'prune', 'poire', 'cerise', 'framboise', 'mangue', 'bigarot'];
-      fruits = this.tools.randomizeArray(fruits).slice(0, 14); //positions aléatoires dans le plateau pour les mélanger
+      this.tools.softRandom(fruits).slice(0, 14); //positions aléatoires dans le plateau pour les mélanger
 
       var ranks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]; //		for (let i=0; i<5; i++)
 
@@ -929,7 +929,7 @@ require.register("js/tools.js", function(exports, require, module) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.showBackdrop = exports.hideDecal = exports.showDecal = exports.release = exports.press = exports.checkDuration = exports.randomizeArray = void 0;
+exports.showBackdrop = exports.hideDecal = exports.showDecal = exports.release = exports.press = exports.checkDuration = exports.randomizeArray = exports.softRandom = void 0;
 
 var _jquery = _interopRequireDefault(require("jquery"));
 
@@ -937,21 +937,41 @@ var _this = void 0;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+var softRandom = function softRandom(array) {
+  return array.sort(function () {
+    return 0.5 - Math.random();
+  });
+};
+
+exports.softRandom = softRandom;
+
 var randomizeArray = function randomizeArray(array) {
   var res = [];
   var nbItems = 0;
 
   while (nbItems < array.length) {
-    var index = Math.round(Math.random() * (array.length - 1));
+    var index = Math.round(Math.random() * (array.length - 1)); //si l'élément d'index 'index' n'est pas déjà rempli
 
     if (res[index] === undefined) {
+      // pour le dernier élément à placer, on ne fait pas d'autres tests pour éviter une boucle infinie
       if (nbItems === array.length - 1) {
         res[index] = array[nbItems];
-        nbItems++;
+        nbItems++; //on veut éviter au maximum que 2 éléments d'une paire se suivent
+        //les paires sont de la forme (chiffre pair, chiffre pair +1)
+        //on vérifie que les éléments précédent et suivant ne sont pas l'autre carte de la paire
+      } else if (array[nbItems] % 2 !== 0) {
+        if (res[index - 1] === undefined || res[index - 1] !== array[nbItems] - 1) {
+          if (res[index + 1] === undefined || res[index + 1] !== array[nbItems] - 1) {
+            res[index] = array[nbItems];
+            nbItems++;
+          }
+        }
       } else {
-        if (res[index - 1] === undefined || res[index - 1] !== array[nbItems] + 1 && res[index - 1] !== array[nbItems] - 1) if (res[index + 1] === undefined || res[index + 1] !== array[nbItems] + 1 && res[index + 1] !== array[nbItems] - 1) {
-          res[index] = array[nbItems];
-          nbItems++;
+        if (res[index - 1] === undefined || res[index - 1] !== array[nbItems] + 1) {
+          if (res[index + 1] === undefined || res[index + 1] !== array[nbItems] + 1) {
+            res[index] = array[nbItems];
+            nbItems++;
+          }
         }
       }
     }

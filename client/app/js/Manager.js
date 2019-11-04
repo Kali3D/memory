@@ -55,7 +55,7 @@ class Manager {
 
 		//creation de la liste de 14 fruits choisis aléatoirement parmi les 18 proposés
 		let fruits = ['pommeRouge', 'banane', 'orange', 'citronVert', 'grenade', 'abricot', 'citronJaune', 'fraise', 'pommeVerte', 'peche', 'raisin', 'pasteque', 'prune', 'poire', 'cerise', 'framboise', 'mangue', 'bigarot'];
-		fruits = this.tools.randomizeArray(fruits).slice(0, 14);
+		this.tools.softRandom(fruits).slice(0, 14);
 		//positions aléatoires dans le plateau pour les mélanger
 		let ranks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27];
 //		for (let i=0; i<5; i++)
