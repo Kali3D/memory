@@ -1743,23 +1743,6 @@ module.exports = {
   })();
 });
 
-require.register("axios/node_modules/is-buffer/index.js", function(exports, require, module) {
-  require = __makeRelativeRequire(require, {}, "axios/node_modules/is-buffer");
-  (function() {
-    /*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-module.exports = function isBuffer (obj) {
-  return obj != null && obj.constructor != null &&
-    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-  })();
-});
-
 require.register("babel-polyfill/lib/index.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "babel-polyfill");
   (function() {
@@ -12016,6 +11999,23 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
 
   buffer[offset + i - d] |= s * 128
+}
+  })();
+});
+
+require.register("is-buffer/index.js", function(exports, require, module) {
+  require = __makeRelativeRequire(require, {}, "is-buffer");
+  (function() {
+    /*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+module.exports = function isBuffer (obj) {
+  return obj != null && obj.constructor != null &&
+    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
   })();
 });

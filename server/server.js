@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const axios = require("axios");
 
 const port = process.env.PORT || 3000;
-const publicPath = path.join(__dirname, "./public");
+const publicPath = path.join(__dirname, "../client/public");
 
 //on utilise un mini serveur pour ne pas divulguer l'url de connexion à la base du côté client
 
@@ -37,10 +37,8 @@ server.get("/scores", (request, response) => {
 //POST /score
 //enregistre un nouveau score
 server.post("/score", (request, response) => {
-	console.log(request.body);
 	axios.post("https://memory-c4efa.firebaseio.com/scores.json", request.body)
 	.then(resp => {
-		console.log(resp);
 		response.send("ok");
 	})
 });
